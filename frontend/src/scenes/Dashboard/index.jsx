@@ -1,9 +1,29 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Calender from "./Calender";
 import Navbar from "components/Navbar";
 import Courses from "./Courses";
 import { Box, Grid, Paper } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
 const Dashboard = () => {
+  const dispatch = useDispatch();
+  const courses = useSelector((state) => state.courses);
+
+  const getCourseInfo = async () => {
+    const response = await fetch(
+      `http:://localhost:3001/${enrollment}/studentInfo`,
+      {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    ); //this should send all the info related to student.
+    const data = await response.json();
+    dispatch(setCourseCompletion({ classesCommenced: data }));
+  };
+
+  useEffect(() => {
+    getCourseInfo();
+  }, []); //// eslint-disable-line react-hooks/exhaustive-deps
+
   return (
     <>
       <Navbar />
@@ -35,21 +55,25 @@ const Dashboard = () => {
               backgroundColor: "#DFEBF6",
             }}
           >
-            <Box sx={{ ml: "2rem", mt: "3rem" }}>
-              <Courses />
-            </Box>
-            <Box sx={{ ml: "2rem", mt: "3rem" }}>
-              <Courses />
-            </Box>
-            <Box sx={{ ml: "2rem", mt: "3rem" }}>
-              <Courses />
-            </Box>
-            <Box sx={{ ml: "2rem", mt: "3rem" }}>
-              <Courses />
-            </Box>
-            <Box sx={{ ml: "2rem", mt: "3rem" }}>
-              <Courses />
-            </Box>
+            {courses.map(
+              ({
+                courseCode,
+                courseName,
+                courseCode,
+                totalClasses,
+                classesCommenced,
+              }) => (
+                <Box sx={{ ml: "2rem", mt: "3rem" }}>
+                  <Courses
+                    key={courseCode}
+                    courseName={courseName}
+                    courseCode={courseCode}
+                    totalClasses={totalClasses}
+                    classesCommenced={classesCommenced}
+                  />
+                </Box>
+              )
+            )}
           </Paper>
         </Grid>
       </Grid>
