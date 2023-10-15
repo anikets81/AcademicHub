@@ -1,0 +1,18 @@
+const mongoose = require('mongoose');
+
+const assignmentSchema = mongoose.Schema({
+    facultyId:{
+        type: String,
+        required: true
+    },
+    courseId:{
+        type: String,
+        required: true
+    },
+    fileLink:{
+        type: String,
+        required: true
+    }
+},{timestamps: true});
+
+module.exports = mongoose.model('assignment',assignmentSchema);

@@ -1,0 +1,41 @@
+const mongoose = require('mongoose');
+
+const studentSchema = mongoose.Schema({
+
+    roll: {
+        type: Number,
+        required: true,
+        unique: true,
+        // length: 9
+    },
+    name: {
+        type: String,
+        required: true
+        // minlength: 5,
+        // maxlength: 20
+    },
+    password: {
+        type: String,
+        required: true,
+        // minlength: 6
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+        // minlength: 5,
+        // maxlength: 30
+    },
+    phone: {
+        type: Number,
+        required: true,
+        unique: true,
+        // length: 10
+    },
+    courseId:{
+        type:Array,
+        "default":[]
+    }
+},{timestamps: true});
+
+module.exports = mongoose.model('student',studentSchema);
