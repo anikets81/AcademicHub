@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
+const cors = require("cors");
 const {signup,login} = require("./userControls.js");
 const {getStudentDetails,getFacultyDetails,getEnrolledStudents,docs} = require("./getDetails.js")
 const {addCourse,addFaculty}=require("./databaseUpdate.js")
@@ -11,6 +12,7 @@ const cookieParser = require("cookie-parser");
 
 dotenv.config();
 const app = express();
+app.use(cors());
 
 app.set("view engine","ejs");
 app.use(bodyParser.urlencoded({extended:false}));
