@@ -5,6 +5,22 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 
+const docs = async(req,res)=>{
+    const obj={
+        "/signup":"post {name,password,email,roll,phone}",
+        "/login":"post {roll,password}",
+        "/addCourse":"post {courseId:courseId,name,totalClasses,facultyId}",
+        "/addFaculty":"post {facultyId:facultyId,name,password,email,phone}",
+        "/getStudentDetails":"get",
+        "/getFacultyDetails":"get {facultyId}",
+        "/getEnrolledStudents":"get {courseId}",
+        '/logout':"get",
+        '/authStatus':"get"
+    }
+    res.status(200).json(obj)
+}
+
+
 const getStudentDetails = async(req,res)=>{
     var user,student;
     user=req.user;
@@ -54,4 +70,15 @@ const getFacultyDetails=async (req,res)=>{
     }else res.status(200).json({"facultyId":result.facultyId,"name":result.name,"email":result.email});
 }
 
-module.exports = {getStudentDetails,getFacultyDetails};
+const getEnrolledStudents=async (req,res)=>{
+    const {courseId}=req.body;
+    const result = await studentModel.find({courseId:courseId});
+    if(!result){
+        return res.status(404).json({msg: "No record found for this courseId"});
+    }else{
+        const finalData = result.map(({roll, name,email,phone}) => ({roll, name,email,phone})); 
+        res.status(200).json(finalData);
+    }
+}
+
+module.exports = {getStudentDetails,getFacultyDetails,getEnrolledStudents,docs};

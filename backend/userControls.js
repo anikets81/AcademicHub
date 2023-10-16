@@ -30,7 +30,13 @@ const signup = async (req,res)=>{
 
         const token = jwt.sign({roll:newUser.roll,name:newUser.name,id:newUser._id},process.env.SECRET_KEY,{expiresIn:process.env.TOKEN_EXPIRY_DURATION});
         // res.cookie("token",token,{httpOnly:true});
-        res.status(200).json({token:token});
+        res.status(200).cookie("token", token, {
+            httpOnly: true,
+            maxAge: process.env.TOKEN_EXPIRY_DURATION*1000
+          }).json({
+            authenticated: true,
+            message: "Authentication Successful."
+        });
         // res.status(200).redirect("/");
     }catch(error){
         console.log(error);
@@ -55,7 +61,13 @@ const login = async (req,res)=>{
     // console.log(verifyToken);
     // res.cookie("token",token,{httpOnly:true});
     // res.status(200).json({token:token});
-    res.status(200).json({token:token});
+    res.status(200).cookie("token", token, {
+        httpOnly: true,
+        maxAge: process.env.TOKEN_EXPIRY_DURATION*1000
+      }).json({
+        authenticated: true,
+        message: "Authentication Successful."
+    });
 }
 
 module.exports = {login,signup};

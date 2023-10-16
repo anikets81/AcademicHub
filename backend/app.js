@@ -3,7 +3,7 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const {signup,login} = require("./userControls.js");
-const {getStudentDetails,getFacultyDetails} = require("./getDetails.js")
+const {getStudentDetails,getFacultyDetails,getEnrolledStudents,docs} = require("./getDetails.js")
 const {addCourse,addFaculty}=require("./databaseUpdate.js")
 const auth = require('./auth');
 const cookieParser = require("cookie-parser");
@@ -18,6 +18,8 @@ app.use(bodyParser.json());
 app.use(express.static(__dirname+"/public"));
 app.use(cookieParser());
 
+app.get("/",docs);
+
 app.post("/signup",signup)
 
 app.post("/login",login)
@@ -30,7 +32,23 @@ app.get("/getStudentDetails",auth,getStudentDetails)
 
 app.get("/getFacultyDetails",auth,getFacultyDetails)
 
-app.get("/getEnrolledStudents",auth,)
+app.get("/getEnrolledStudents",auth,getEnrolledStudents)
+
+app.use('/logout', (req, res) => {
+    res.cookie("token", null, {
+      httpOnly: true,
+      Expires: Date.now-1000
+    }).send({
+      authenticated: false,
+      message: "Logout Successful."
+    });
+  });
+
+  app.use('/authStatus', auth,(req, res) => {
+    if(!req.user)
+        res.send({isAuthenticated: false})
+    else res.send({isAuthenticated: true})
+  })
 
 mongoose.connect(process.env.MONGO_DB,{useNewUrlParser: true,useUnifiedTopology: true})
 .then(()=>{
