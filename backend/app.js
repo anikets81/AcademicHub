@@ -4,8 +4,8 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const {signup,login} = require("./userControls.js");
-const {getStudentDetails,getFacultyDetails,getEnrolledStudents,docs} = require("./getDetails.js")
-const {addCourse,addFaculty}=require("./databaseUpdate.js")
+const {getStudentDetails,getFacultyDetails,getEnrolledStudents,docs,getCoursesList,fetchAssignment} = require("./getDetails.js")
+const {addCourse,addFaculty,addCourses,markAttendance,uploadAssignment}=require("./databaseUpdate.js")
 const auth = require('./auth');
 const cookieParser = require("cookie-parser");
 // const jwt = require("jsonwebtoken");
@@ -20,23 +20,33 @@ app.use(bodyParser.json());
 app.use(express.static(__dirname+"/public"));
 app.use(cookieParser());
 
-app.get("/",docs);
+app.get("/api/",docs);
 
-app.post("/signup",signup)
+app.post("api/signup",signup)
 
-app.post("/login",login)
+app.post("api/login",login)
 
-app.post("/addCourse",addCourse)
+app.get("api/addCourse",addCourse) //admin
 
-app.post("/addFaculty",addFaculty)
+app.post("api/addFaculty",addFaculty) //admin
 
-app.get("/getStudentDetails",auth,getStudentDetails)
+app.get("api/getStudentDetails",auth,getStudentDetails) //student
 
-app.get("/getFacultyDetails",auth,getFacultyDetails)
+app.get("api/getFacultyDetails",auth,getFacultyDetails) //admin
 
-app.get("/getEnrolledStudents",auth,getEnrolledStudents)
+app.get("api/getEnrolledStudents",auth,getEnrolledStudents) //faculty
 
-app.use('/logout', (req, res) => {
+app.get("api/addCourses",addCourses); //admin
+
+app.get("api/getCoursesList",auth,getCoursesList) //admin
+
+app.get("api/markAttendance",auth,markAttendance) //faculty
+
+app.post("api/uploadAssignment",auth,uploadAssignment) //faculty
+
+app.post("api/fetchAssignment",auth,fetchAssignment) //students & faculty
+
+app.use('api/logout', (req, res) => {
     res.cookie("token", null, {
       httpOnly: true,
       Expires: Date.now-1000
@@ -46,7 +56,7 @@ app.use('/logout', (req, res) => {
     });
   });
 
-  app.use('/authStatus', auth,(req, res) => {
+  app.use('api/authStatus', auth,(req, res) => {
     if(!req.user)
         res.send({isAuthenticated: false})
     else res.send({isAuthenticated: true})

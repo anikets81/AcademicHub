@@ -1,6 +1,7 @@
-const studentModel = require("./models/student");
-const courseModel = require("./models/course");
+const studentModel = require("./models/student")
+const courseModel = require("./models/course")
 const facultyModel = require("./models/faculty")
+const assignmentModel = require('./model/assignemnt')
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
@@ -81,4 +82,13 @@ const getEnrolledStudents=async (req,res)=>{
     }
 }
 
-module.exports = {getStudentDetails,getFacultyDetails,getEnrolledStudents,docs};
+const getCoursesList = async (req,res)=>{
+    const result = await courseModel.find({});
+    if(!result){
+        return res.status(404).json({msg: "No record found"});
+    }else{
+        return res.status(200).json(result);
+    }
+}
+
+module.exports = {getStudentDetails,getFacultyDetails,getEnrolledStudents,docs,getCoursesList,fetchAssignment};
