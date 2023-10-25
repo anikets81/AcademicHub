@@ -33,7 +33,7 @@ app.post("/api/signup",signup)
 
 app.post("/api/login",login)
 
-app.get("/api/addCourse",addCourse) //admin
+app.post("/api/addCourse",addCourse) //admin
 
 app.post("/api/addFaculty",addFaculty) //admin
 
@@ -45,11 +45,11 @@ app.get('/api/getFacultyDashboardDetails',auth,getFacultyDashboardDetails)
 
 app.get("/api/getEnrolledStudents",auth,getEnrolledStudents) //faculty
 
-app.get("/api/addCourses",addCourses); //admin
+app.post("/api/addCourses",addCourses); //admin
 
 app.get("/api/getCoursesList",auth,getCoursesList) //admin
 
-app.get("/api/markAttendance",auth,markAttendance) //faculty
+app.post("/api/markAttendance",auth,markAttendance) //faculty
 
 app.get('/api/attendanceQuery',auth,attendanceQuery) //student
 

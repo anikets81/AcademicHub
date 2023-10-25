@@ -17,15 +17,16 @@ const docs = async(req,res)=>{
         '/api/logout':"get",
         "/api/addCourse":"post {courseId:courseId,name,totalClasses,facultyId}",
         "/api/getCoursesList":"get ",
-        "/api/addCourses":"get {courseId,name,totalClasses,facultyId}",
+        "/api/addCourses":"post {courseId,name,totalClasses,facultyId}",
         "/api/getStudentDetails":"get",
         "/api/getEnrolledStudents":"get {courseId}",
         "/api/addFaculty":"post {facultyId:facultyId,name,password,email,phone}",
         "/api/getFacultyDetails":"get {facultyId}",
         "/api/getFacultyDashboardDetails":"get {facultyId}",
-        "/api/markAttendance":"get [{obj1},{obj2}...] & {obj1}={roll,courseId}",
+        "/api/markAttendance":"post [{obj1},{obj2}...] & {obj1}={roll,courseId}",
         "/api/attendanceQuery":"get {roll,courseId}",
-        "/api/attendanceQueryByFaculty":"get {courseId}","/api/assignmentQuery":"get {courseId}",
+        "/api/attendanceQueryByFaculty":"get {courseId}",
+        "/api/assignmentQuery":"get {courseId}",
         "/api/uploadAssignment":"post {courseId,title,assignmentFile}",
         "/api/getAssignment":"get {courseId,index}",
         "/api/uploadExamSheet":"post {courseId,roll,examsheetFile}",
@@ -77,7 +78,7 @@ const getStudentDetails = async(req,res)=>{
 }
 
 const getFacultyDetails=async (req,res)=>{
-    const {facultyId}=req.body;
+    const {facultyId}=req.query;
     const result = await facultyModel.findOne({facultyId:facultyId});
     if(!result){
         return res.status(404).json({msg: "No record found for this facultyId"});
@@ -85,7 +86,7 @@ const getFacultyDetails=async (req,res)=>{
 }
 
 const getEnrolledStudents=async (req,res)=>{
-    const {courseId}=req.body;
+    const {courseId}=req.query;
     const result = await studentModel.find({courseId:courseId});
     if(!result){
         return res.status(404).json({msg: "No record found for this courseId"});
@@ -105,7 +106,7 @@ const getCoursesList = async (req,res)=>{
 }
 
 const getAssignment = async(req,res)=>{
-    const courseId=req.body.courseId,assignmentNo=req.body.index;
+    const courseId=req.query.courseId,assignmentNo=req.query.index;
     const result = await assignmentModel.findOne({courseId:courseId})
     if(result.length===0){
         return res.status(400).json({msg:`Database is not having assignment${assignmentNo} for courseId ${courseId}`})
@@ -124,7 +125,7 @@ const fetchMarksheet = async(req,res)=>{
 }
 
 const assignmentQuery = async (req,res)=>{
-    const courseId = req.body.courseId;
+    const courseId = req.query.courseId;
     const result = await assignmentModel.findOne({courseId:courseId},{assignments:1})
     if(result.length===0){
         res.status(200).json({msg:`No assignment found for courseId ${courseId}`})
@@ -137,7 +138,7 @@ const assignmentQuery = async (req,res)=>{
 }
 
 const attendanceQuery = async (req,res)=>{
-    const roll = req.body.roll,courseId = req.body.courseId;
+    const roll = req.query.roll,courseId = req.query.courseId;
     try{
         const result = await attendanceModel.find({courseId:courseId,roll:roll},{date:1,_id:0})
         newResult = result.map((item)=>(item.date))
@@ -148,7 +149,7 @@ const attendanceQuery = async (req,res)=>{
 }
 
 const attendanceQueryByFaculty = async (req,res)=>{
-    const courseId = req.body.courseId;
+    const courseId = req.query.courseId;
     try{
         const result = await attendanceModel.find({courseId:courseId},{roll:1,date:1,_id:0});
         res.status(200).json(result);
@@ -158,7 +159,7 @@ const attendanceQueryByFaculty = async (req,res)=>{
 }
 
 const getFacultyDashboardDetails = async(req,res)=>{
-    const facultyId=req.body.facultyId;
+    const facultyId=req.query.facultyId;
     try{
         const result = await courseModel.find(
             {facultyId:facultyId},
@@ -173,8 +174,8 @@ const getFacultyDashboardDetails = async(req,res)=>{
 }
 
 const getExamsheet = async(req,res)=>{
-    if(req.user.role=='student' || req.body.roll!=undefined){
-        const {courseId,roll}=req.body
+    if(req.user.role=='student' || req.query.roll!=undefined){
+        const {courseId,roll}=req.query
         try{
             const result = await examsheetModel.findOne({courseId:courseId,roll:roll})
             if(!result)
@@ -184,7 +185,7 @@ const getExamsheet = async(req,res)=>{
             return res.status(400).json(err)
         }
     }else if(req.user.role=='faculty'){
-        const {courseId}=req.body
+        const {courseId}=req.query
         try{
             const result=await examsheetModel.find({courseId:courseId},{roll:1,_id:0})
             const newResult=result.map((item)=>(item.roll))
