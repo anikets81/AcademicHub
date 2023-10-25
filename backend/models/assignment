@@ -5,9 +5,9 @@ const assignmentSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    fileLink:{
-        type: String,
-        required: true
+    assignments:{
+        type:Array,
+        "default":[] // contains {title,fileLink}
     }
 },{timestamps: true});
 

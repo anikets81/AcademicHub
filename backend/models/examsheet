@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const examsheetSchema = mongoose.Schema({
-    studentId: {
+    roll: { //student's roll
         type: String,
         required: true
         // minlength: 5,
@@ -11,12 +11,6 @@ const examsheetSchema = mongoose.Schema({
         type: String,
         required: true,
         // minlength: 6
-    },
-    facultyId: {
-        type: String,
-        required: true,
-        // minlength: 5,
-        // maxlength: 30
     },
     fileLink:{
         type: String,

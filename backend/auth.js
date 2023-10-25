@@ -1,6 +1,10 @@
 const jwt = require('jsonwebtoken')
 
 function authenticate(req,res,next){
+  console.log(req.body.courseId)
+
+
+
     const token = req.cookies?.token;
     console.log(token);
     var user;

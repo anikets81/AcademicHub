@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 const facultySchema = mongoose.Schema({
     facultyId:{
         type:String,
-        required:true
+        required:true,
+        unique:true
     },
     name: {
         type: String,
@@ -24,7 +25,7 @@ const facultySchema = mongoose.Schema({
         // maxlength: 30
     },
     phone: {
-        type: Number,
+        type: String,
         required: true,
         unique: true,
         // length: 10
