@@ -77,7 +77,7 @@ app.use('/api/logout', (req, res) => {
 
   app.use('/api/authStatus', auth,(req, res) => {
     if(!req.user)
-        res.status(200).json({isAuthenticated: false})
+        res.status(401).json({isAuthenticated: false})
     else res.status(200).json({isAuthenticated: true,role:req.user.role})
   })
 
