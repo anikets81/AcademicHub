@@ -109,13 +109,13 @@ const getAssignment = async(req,res)=>{
     const courseId=req.query.courseId,assignmentNo=req.query.index;
     const result = await assignmentModel.findOne({courseId:courseId})
     if(result.length===0){
-        return res.status(400).json({msg:`Database is not having assignment${assignmentNo} for courseId ${courseId}`})
+        return res.status(404).json({msg:`Database is not having assignment${assignmentNo} for courseId ${courseId}`})
     }else{
         // console.log(__dirname+result[0].fileLink)
         if(result.assignments.length>assignmentNo)
             return res.status(200).sendFile(result.assignments[assignmentNo].fileLink)
         else
-            return res.status(400).json({msg:`Database is not having assignment${assignmentNo} for courseId ${courseId}`})
+            return res.status(404).json({msg:`Database is not having assignment${assignmentNo} for courseId ${courseId}`})
         // return res.status(200).sendFile(__dirname+result[0].fileLink);
     }
 }
@@ -128,7 +128,7 @@ const assignmentQuery = async (req,res)=>{
     const courseId = req.query.courseId;
     const result = await assignmentModel.findOne({courseId:courseId},{assignments:1})
     if(result.length===0){
-        res.status(200).json({msg:`No assignment found for courseId ${courseId}`})
+        res.status(404).json({msg:`No assignment found for courseId ${courseId}`})
     }else{
         const newResult={assignments:[]}
         newResult.assignments = result.assignments.map(({title})=>({title}))
@@ -144,7 +144,7 @@ const attendanceQuery = async (req,res)=>{
         newResult = result.map((item)=>(item.date))
         res.status(200).json(newResult);
     }catch(err){
-        res.status(200).json(err);
+        res.status(401).json(err);
     }
 }
 
@@ -154,7 +154,7 @@ const attendanceQueryByFaculty = async (req,res)=>{
         const result = await attendanceModel.find({courseId:courseId},{roll:1,date:1,_id:0});
         res.status(200).json(result);
     }catch(err){
-        return res.status(200).json(err);
+        return res.status(401).json(err);
     }
 }
 
@@ -182,7 +182,7 @@ const getExamsheet = async(req,res)=>{
                 return res.status(200).json({msg:"Examsheet not uploaded till now, Check again later..."})
             return res.status(200).sendFile(result.fileLink)
         }catch(err){
-            return res.status(400).json(err)
+            return res.status(401).json(err)
         }
     }else if(req.user.role=='faculty'){
         const {courseId}=req.query
@@ -191,12 +191,12 @@ const getExamsheet = async(req,res)=>{
             const newResult=result.map((item)=>(item.roll))
             return res.status(200).json(newResult)
         }catch(err){
-            return res.status(400).json(err)
+            return res.status(401).json(err)
         }
     }else if(req.user.role=='admin'){
         res.status(400).json({msg:"Feature under development..."})
     }else{
-        res.status(400).json({msg:"Hackor..."})
+        res.status(401).json({msg:"Hackor..."})
     }
 }
 
