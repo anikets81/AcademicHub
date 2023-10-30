@@ -16,7 +16,7 @@ const addCourse = async (req,res)=>{
     try{
         const course = await courseModel.findOne({courseId: courseId});
         if(course){
-            return res.status(400).json({msg: "CourseId already exists"});
+            return res.status(403).json({msg: "CourseId already exists"});
         }
         const newCourse = await courseModel.create({
             courseId:courseId,
@@ -50,7 +50,7 @@ const addFaculty = async (req,res)=>{
     try{
         const faculty = await facultyModel.findOne({facultyId: facultyId});
         if(faculty){
-            return res.status(400).json({msg: "FacultyId already exists"});
+            return res.status(403).json({msg: "FacultyId already exists"});
         }
         const newFaculty = await facultyModel.create({
             facultyId:facultyId,
@@ -138,7 +138,7 @@ const uploadExamSheet = async(req,res)=>{
     const uploadPath ='/examsheets/' + uniqueSuffix + assignmentFile.name;
     const result = await examsheetModel.findOne({courseId:req.body.courseId,roll:studentRoll})
     if(result)
-        return res.status(401).json({msg:`Examsheet for studentId ${studentRoll} is already uploaded`})
+        return res.status(403).json({msg:`Examsheet for studentId ${studentRoll} is already uploaded`})
     // Use the mv() method to place the file somewhere on your server
     assignmentFile.mv(__dirname+uploadPath, async function(err) {
         if (err)
