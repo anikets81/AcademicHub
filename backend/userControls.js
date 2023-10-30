@@ -16,11 +16,11 @@ const signup = async (req,res)=>{
             const hashedPassword = await bcrypt.hash(password,10);
             let user = await studentModel.findOne({email: email});
             if(user){
-                return res.status(400).json({msg: "User already exists"});
+                return res.status(403).json({msg: "User already exists"});
             }
             user = await studentModel.findOne({roll: roll});
             if(user){
-                return res.status(400).json({msg: "User already exists"});
+                return res.status(403).json({msg: "User already exists"});
             }
             newUser = await studentModel.create({
                 name: name,
@@ -40,10 +40,10 @@ const signup = async (req,res)=>{
             const hashedPassword = await bcrypt.hash(password,10);
             let user = await facultyModel.findOne({email:email})
             if(user)
-                return res.status(400).json({msg:"user already exists"})
+                return res.status(403).json({msg:"user already exists"})
             user = await facultyModel.findOne({facultyId:facultyId})
             if(user)
-                return res.status(400).json({msg:"user already exists"})
+                return res.status(403).json({msg:"user already exists"})
             newUser = await facultyModel.create({
                 name: name,
                 password: hashedPassword,
@@ -82,7 +82,7 @@ const login = async (req,res)=>{
         }
         const isPasswordCorrect = await bcrypt.compare(password,user.password);
         if(!isPasswordCorrect){
-            return res.status(400).json({msg: "Invalid credentials"});
+            return res.status(401).json({msg: "Invalid credentials"});
         }
         const token = jwt.sign({roll:user.roll,name:user.name,id:user._id,role:role},process.env.SECRET_KEY,{expiresIn:process.env.TOKEN_EXPIRY_DURATION});
         res.status(200).cookie("token", token, {
@@ -100,7 +100,7 @@ const login = async (req,res)=>{
         }
         const isPasswordCorrect = await bcrypt.compare(password,user.password);
         if(!isPasswordCorrect){
-            return res.status(400).json({msg: "Invalid credentials"});
+            return res.status(401).json({msg: "Invalid credentials"});
         }
         const token = jwt.sign({facultyId:user.facultyId,name:user.name,id:user._id,role:role},process.env.SECRET_KEY,{expiresIn:process.env.TOKEN_EXPIRY_DURATION});
         res.status(200).cookie("token", token, {
