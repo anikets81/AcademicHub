@@ -14,7 +14,7 @@ function authenticate(req,res,next){
   
     jwt.verify(token, process.env.SECRET_KEY, (err, decodedToken) => {
       if (err) {
-        return res.status(403).json({ error: 'Token invalid',isAuthenticated: false });
+        return res.status(401).json({ error: 'Token invalid',isAuthenticated: false });
       }
       // Attach the decoded token to the request object
       user = decodedToken;
